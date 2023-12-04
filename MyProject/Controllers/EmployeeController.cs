@@ -6,10 +6,18 @@ namespace MyProject.Controllers
 {
     public class EmployeeController : Controller
     {
-        HttpClient client = new HttpClient()
+        readonly IConfiguration _configuration;
+        HttpClient _client;
+        public EmployeeController(IConfiguration configuration)
         {
-            BaseAddress = new Uri("https://localhost:44384/api/Employee/")
-        };
+            _configuration = configuration;
+            _client = new HttpClient()
+            {
+                BaseAddress = new Uri(_configuration["APIUrl"] + "Employee/")
+            };
+
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -18,7 +26,7 @@ namespace MyProject.Controllers
         public JsonResult Empdetals()
         {
             List<Employee>? employees = new List<Employee>();
-            HttpResponseMessage httpResponseMessage = client.GetAsync(client.BaseAddress + "Emplist").Result;
+            HttpResponseMessage httpResponseMessage = _client.GetAsync(_client.BaseAddress + "Emplist").Result;
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 string content = httpResponseMessage.Content.ReadAsStringAsync().Result;

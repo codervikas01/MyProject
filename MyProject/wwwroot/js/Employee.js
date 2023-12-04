@@ -1,9 +1,18 @@
-﻿//var JQ = jQuery.noConflict(); 
-$(document).ready(function () { 
+﻿var JQ = jQuery.noConflict(); 
+JQ(document).ready(function () { 
     BindEmpDetails();
-})
+    JQ('#btnAdd').click(function () {
+        JQ('#mdl').css("display", "block");
+    });
 
-var InnerHtml = "<table id='tblEmp'><thead>"
+})
+    function closeModal() {
+        $('#mdl').css("display", "none");
+    }
+
+
+var InnerHtml = "<table id='tblEmp' class='table table-striped table-bordered table-hover'>";
+InnerHtml += "<thead class='thead-dark' style='background-color: #3498db; color: white;'>";
 InnerHtml = InnerHtml + "<tr><th>Name</th>"
 InnerHtml = InnerHtml + "<th>Email</th>"
 InnerHtml = InnerHtml + "<th>PhoneNumber</th>"
@@ -16,13 +25,13 @@ InnerHtml = InnerHtml + "<th>Delete</th><tr>"
 InnerHtml = InnerHtml + " </thead>"
 
 function BindEmpDetails() {
-    $.ajax({
+    JQ.ajax({
         type: "Get",
         url: "/Employee/Empdetals",
         success: function (data) {
 
             var tbodyHTML = '<tbody>'
-            $.each(data, function (index, employee) {
+            JQ.each(data, function (index, employee) {
                 tbodyHTML += '<tr>';
                 tbodyHTML += '<td>' + employee.firstName + ' ' + employee.lastName + '</td>';
                 tbodyHTML += '<td>' + employee.email +'</td>';
@@ -39,7 +48,7 @@ function BindEmpDetails() {
 
             InnerHtml += tbodyHTML
 
-            $('#tblDiv').html(InnerHtml)
+            JQ('#tblDiv').html(InnerHtml)
         },
         error: function (error) {
 
