@@ -2,7 +2,13 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+@* <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script> *@
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+
+
 <script src="~/js/employee.js"></script>
 <link href="~/css/employee.css" rel="stylesheet" />
 
@@ -10,13 +16,14 @@
     <h1 class="mb-4">Employees</h1>
 </div>
 
-
 <div class="container" style="width:auto">
     <div>
         <button id="btnAdd" style="margin-bottom:1%">Add</button>
         <div id="tblDiv">
         </div>
     </div>
+
+    @* Modal pop up *@
     <div class="modal" id="mdl" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content" style="width:auto">
@@ -27,49 +34,50 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="fname" class="form-label">First Name</label>
-                        <input type="text" id="fname" name="FirstName" class="form-control" placeholder="First Name" />
-                    </div>
+                    <form id="Empform">
+                        <div class="mb-3">
+                            <label for="fname" class="form-label">First Name</label>
+                            <input type="text" id="fname" name="FirstName" class="form-control" placeholder="First Name" />
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="lname" class="form-label">Last Name</label>
-                        <input type="text" id="lname" name="LastName" class="form-control" placeholder="Last Name" />
-                    </div>
+                        <div class="mb-3">
+                            <label for="lname" class="form-label">Last Name</label>
+                            <input type="text" id="lname" name="LastName" class="form-control" placeholder="Last Name" />
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" name="Email" class="form-control" placeholder="Email" />
-                    </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" name="Email" class="form-control" placeholder="Email" />
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="phoneNumber" class="form-label">Phone Number</label>
-                        <input type="tel" id="phoneNumber" name="PhoneNumber" class="form-control" placeholder="Phone Number" />
-                    </div>
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <input type="tel" id="phoneNumber" name="PhoneNumber" class="form-control" placeholder="Phone Number" />
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="dob" class="form-label">Date Of Birth</label>
-                        <input type="date" id="dob" name="DOB" class="form-control" placeholder="Date Of Birth" />
-                    </div>
+                        <div class="mb-3">
+                            <label for="dob" class="form-label">Date Of Birth</label>
+                            <input type="date" id="dob" name="DOB" class="form-control" placeholder="Date Of Birth" />
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" id="address" name="Address" class="form-control" placeholder="Address" />
-                    </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <input type="text" id="address" name="Address" class="form-control" placeholder="Address" />
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="department" class="form-label">Department</label>
-                        <input type="text" id="department" name="Department" class="form-control" placeholder="Department" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="salary" class="form-label">Salary</label>
-                        <input type="text" id="salary" name="Salary" class="form-control" placeholder="Salary" />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" onclick="closeModal();" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                        <div class="mb-3">
+                            <label for="department" class="form-label">Department</label>
+                            <input type="text" id="department" name="Department" class="form-control" placeholder="Department" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="salary" class="form-label">Salary</label>
+                            <input type="text" id="salary" name="Salary" class="form-control" placeholder="Salary" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" onclick="closeModal();" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" onclick="AddEmp();" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

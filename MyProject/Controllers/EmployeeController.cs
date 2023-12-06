@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyProject.Models;
+using System.Text;
 using System.Text.Json;
 
 namespace MyProject.Controllers
@@ -40,5 +41,26 @@ namespace MyProject.Controllers
             }
 
         }
+
+        [HttpPost]
+        public JsonResult AddEmployee(Employee employee)
+        {
+           if (employee != null)
+            {
+                string data = JsonSerializer.Serialize(employee);
+                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+                HttpResponseMessage httpResponseMessage = _client.PostAsync(_client.BaseAddress + "EmpCreate", content).Result;
+                if(httpResponseMessage.IsSuccessStatusCode)
+                {
+                    return new JsonResult("0");
+                }
+                else
+                {
+                    return new JsonResult("1");
+                }
+            }
+           return new JsonResult("2");
+        }
+
     }
 }
