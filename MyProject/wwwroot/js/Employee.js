@@ -2,6 +2,18 @@
 JQ(document).ready(function () {
     BindEmpDetails();
     JQ('#btnAdd').click(function () {
+        JQ('#addEmpTitle').css('display', 'block');
+        JQ('#btnUpdate').css('display', 'none');
+        JQ('#updateEmpTitle').css('display', 'none');
+        JQ('#btnSave').css('display', 'block');
+        JQ('#fname').val('');
+        JQ('#lname').val('');
+        JQ('#email').val('');
+        JQ('#phoneNumber').val('');
+        JQ('#dob').val('');
+        JQ('#address').val('');
+        JQ('#department').val('');
+        JQ('#salary').val('');
         JQ('#mdl').css("display", "block");
     });
 
@@ -11,20 +23,20 @@ function closeModal() {
 }
 
 
-var InnerHtml = "<table id='tblEmp' class='table table-striped table-bordered table-hover'>";
-InnerHtml += "<thead class='thead-dark' style='background-color: #3498db; color: white;'>";
-InnerHtml += "<tr><th>Name</th>"
-InnerHtml += "<th>Email</th>"
-InnerHtml += "<th>PhoneNumber</th>"
-InnerHtml += "<th>DateOfBirth</th>"
-InnerHtml += "<th>Address</th>"
-InnerHtml += "<th>Department</th>"
-InnerHtml += "<th>Salary</th>"
-InnerHtml += "<th>Update</th>"
-InnerHtml += "<th>Delete</th><tr>"
-InnerHtml += " </thead>"
-
 function BindEmpDetails() {
+    var InnerHtml = "<table id='tblEmp' class='table table-striped table-bordered table-hover'>";
+    InnerHtml += "<thead class='thead-dark' style='background-color: #3498db; color: white;'>";
+    InnerHtml += "<tr><th>Name</th>"
+    InnerHtml += "<th>Email</th>"
+    InnerHtml += "<th>PhoneNumber</th>"
+    InnerHtml += "<th>DateOfBirth</th>"
+    InnerHtml += "<th>Address</th>"
+    InnerHtml += "<th>Department</th>"
+    InnerHtml += "<th>Salary</th>"
+    InnerHtml += "<th>Update</th>"
+    InnerHtml += "<th>Delete</th><tr>"
+    InnerHtml += " </thead>"
+
     JQ.ajax({
         type: "Get",
         url: "/Employee/Empdetals",
@@ -49,6 +61,8 @@ function BindEmpDetails() {
             InnerHtml += tbodyHTML
 
             JQ('#tblDiv').html(InnerHtml);
+            tbodyHTML = '';
+            InnerHtml = '';
 
             JQ('.edit-button').on('click', function () {
                 var employeeId = JQ(this).data('employee-id');
@@ -57,7 +71,7 @@ function BindEmpDetails() {
 
             JQ('.delete-button').on('click', function () {
                 var employeeId = JQ(this).data('employee-id');
-                Delete(employeeId);
+                DeleteEmp(employeeId);
             });
 
         },
@@ -68,14 +82,40 @@ function BindEmpDetails() {
 }
 
 function EditPopUp(id) {
-    JQ('#mdl').css("display", "block");
-    // You can use the 'id' parameter to do further processing or open a modal for the specific employee.
-}
 
-function Delete(id) {
-    alert(id)
+    JQ('#updateEmpTitle').css('display', 'block');
+    JQ('#btnUpdate').css('display', 'block');
+    JQ('#addEmpTitle').css('display', 'none');
+    JQ('#btnSave').css('display', 'none');
+
+    JQ.ajax({
+        type: "Get",
+        url: "Employee/GetEmpById?id=" + id,
+        success: function (response) {
+            if (response != null || response != 1) {
+                JQ('#fname').val(response.firstName);
+                JQ('#lname').val(response.lastName);
+                JQ('#email').val(response.email);
+                JQ('#phoneNumber').val(response.phoneNumber);
+                JQ('#dob').val(response.dateOfBirth);
+                JQ('#address').val(response.address);
+                JQ('#department').val(response.department);
+                JQ('#salary').val(response.salary);
+
+                JQ('#mdl').css("display", "block");
+            }
+            else {
+                alert("Somthing is wrong.");
+            }
+        },
+        error: function () {
+            alert("Somthing is wrong.");
+
+        }
+
+    });
 }
-function AddEmp() {
+function AddEmp(id) {
     JQ("#Empform").validate({
         rules: {
             FirstName: {
@@ -136,7 +176,13 @@ function AddEmp() {
             },
         },
         submitHandler: function (form) {
-            SaveEmp();
+
+            if (id == 1) {
+                SaveEmp();
+            }
+            else {
+                UpadteEmp();
+            }
         }
     });
 }
@@ -163,16 +209,15 @@ function SaveEmp() {
             if (response == 0) {
                 closeModal()
                 JQ('#fname').val('');
-                JQ('#ldname').val('');
+                JQ('#lname').val('');
                 JQ('#email').val('');
                 JQ('#phoneNumber').val('');
                 JQ('#dob').val('');
                 JQ('#address').val('');
                 JQ('#department').val('');
                 JQ('#salary').val('');
-                JQ('#tblDiv').html('')
+                JQ('#tblDiv').html('');
                 BindEmpDetails();
-                alert("Record added successfully.");
             }
             else {
                 alert("Somthing is wrong.");
@@ -186,3 +231,23 @@ function SaveEmp() {
 
 }
 
+function DeleteEmp(id) {
+    JQ.ajax({
+        url: "Employee/DeleteEmployee?id=" + id,
+        type: "Get",
+        success: function (response) {
+            if (response == 0) {
+
+                BindEmpDetails();
+            }
+            else {
+                alert("Somthing is wrong.");
+            }
+        },
+        error: function (error) {
+            alert("Somthing is wrong.");
+        }
+
+    })
+
+}

@@ -28,7 +28,8 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content" style="width:auto">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add Employee</h5>
+                    <h5 class="modal-title" id="addEmpTitle">Add Employee</h5>
+                    <h5 class="modal-title" id="updateEmpTitle">Update Employee</h5>
                     <button type="button" class="close" onclick="closeModal();" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -75,7 +76,8 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" onclick="closeModal();" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" onclick="AddEmp();" class="btn btn-primary">Save changes</button>
+                            <button type="submit" onclick="AddEmp(1);" id="btnSave" class="btn btn-primary">Save</button>
+                            <button type="submit" onclick="AddEmp(2);" id="btnUpdate" class="btn btn-primary">Save changes</button>
                         </div>
                     </form>
                 </div>
