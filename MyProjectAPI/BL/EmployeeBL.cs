@@ -34,7 +34,7 @@ namespace MyProjectAPI.BL
                 return "fail";
             }
         }
-        public Employee GetEmp(int id)
+        public Employee? GetEmp(int id)
         {
             Employee? employee = Context.Employees.Find(id);
             if (employee != null)

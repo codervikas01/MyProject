@@ -48,7 +48,8 @@ function BindEmpDetails() {
                 tbodyHTML += '<td>' + employee.firstName + ' ' + employee.lastName + '</td>';
                 tbodyHTML += '<td>' + employee.email + '</td>';
                 tbodyHTML += '<td>' + employee.phoneNumber + '</td>';
-                tbodyHTML += '<td>' + employee.dateOfBirth + '</td>';
+                var formattedDate = new Date(employee.dateOfBirth).toLocaleDateString('en-GB');
+                tbodyHTML += '<td>' + formattedDate + '</td>';
                 tbodyHTML += '<td>' + employee.address + '</td>';
                 tbodyHTML += '<td>' + employee.department + '</td>';
                 tbodyHTML += '<td>' + employee.salary + '</td>';
@@ -93,15 +94,16 @@ function EditPopUp(id) {
         url: "Employee/GetEmpById?id=" + id,
         success: function (response) {
             if (response != null || response != 1) {
+                JQ('#empId').val(response.employeeId);
                 JQ('#fname').val(response.firstName);
                 JQ('#lname').val(response.lastName);
                 JQ('#email').val(response.email);
                 JQ('#phoneNumber').val(response.phoneNumber);
-                JQ('#dob').val(response.dateOfBirth);
+                var formattedDate = new Date(response.dateOfBirth).toISOString().split('T')[0];
+                JQ('#dob').val(formattedDate);
                 JQ('#address').val(response.address);
                 JQ('#department').val(response.department);
                 JQ('#salary').val(response.salary);
-
                 JQ('#mdl').css("display", "block");
             }
             else {
@@ -183,6 +185,56 @@ function AddEmp(id) {
             else {
                 UpadteEmp();
             }
+        }
+    });
+}
+
+function UpadteEmp() {
+    var employee = {
+        EmployeeId: JQ('#empId').val(),
+        firstName: JQ('#fname').val(),
+        lastName: JQ('#lname').val(),
+        email: JQ('#email').val(),
+        phoneNumber: JQ('#phoneNumber').val(),
+        dateOfBirth: JQ('#dob').val(),
+        address: JQ('#address').val(),
+        department: JQ('#department').val(),
+        salary: JQ('#salary').val(),
+        isActive: true
+    }
+
+    JQ.ajax({
+        url: "Employee/UpdateEmployee",
+        type: "POST",
+        data: employee,
+        success: function (response) {
+            if (response !== 0 && response !== 2) {
+                closeModal();
+                // Reset form fields
+                JQ('#empId, #fname, #lname, #email, #phoneNumber, #dob, #address, #department, #salary').val('');
+
+                // Update table values based on the response
+                var $row = JQ('#tblEmp tbody tr[data-employee-id="' + response.employeeId + '"]');
+                $row.find('td:eq(0)').text(response.firstName + ' ' + response.lastName);
+                $row.find('td:eq(1)').text(response.email);
+                $row.find('td:eq(2)').text(response.phoneNumber);
+                $row.find('td:eq(3)').text(response.dateOfBirth);
+                $row.find('td:eq(4)').text(response.address);
+                $row.find('td:eq(5)').text(response.department);
+                $row.find('td:eq(6)').text(response.salary);
+
+                // Update buttons
+                $row.find('td:eq(7)').html('<button class="edit-button" data-employee-id="' + response.employeeId + '">Edit</button>');
+                $row.find('td:eq(8)').html('<button class="delete-button" data-employee-id="' + response.employeeId + '">Delete</button>');
+
+                console.log("UI Updated Successfully");
+            } else {
+                alert("Something is wrong.");
+            }
+        },
+        error: function (error) {
+            alert("Something is wrong.");
+            console.error("Error updating employee:", error);
         }
     });
 }

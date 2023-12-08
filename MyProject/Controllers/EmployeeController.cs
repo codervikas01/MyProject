@@ -31,9 +31,26 @@ namespace MyProject.Controllers
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 string content = httpResponseMessage.Content.ReadAsStringAsync().Result;
-                employees = JsonSerializer.Deserialize<List<Employee>>(content);
-                return new JsonResult(employees);
+                var empList = JsonSerializer.Deserialize<List<Employee>>(content);
+                if (empList != null)
+                {
+                    foreach (var emp in empList)
+                    {
+                        Employee employee = new Employee();
+                        employee.employeeId = emp.employeeId;
+                        employee.firstName = emp.firstName;
+                        employee.lastName = emp.lastName;
+                        employee.email = emp.email;
+                        employee.phoneNumber = emp.phoneNumber;
+                        employee.dateOfBirth = emp.dateOfBirth;
+                        employee.address = emp.address;
+                        employee.department = emp.department;
+                        employee.salary = emp.salary;
 
+                        employees.Add(employee);
+                    }
+                }
+                return new JsonResult(employees);
             }
             else
             {
@@ -53,6 +70,25 @@ namespace MyProject.Controllers
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     return new JsonResult("0");
+                }
+                else
+                {
+                    return new JsonResult("1");
+                }
+            }
+            return new JsonResult("2");
+        }
+        [HttpPost]
+        public JsonResult UpdateEmployee(Employee employee)
+        {
+            if (employee != null)
+            {
+                string data = JsonSerializer.Serialize(employee);
+                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+                HttpResponseMessage httpResponseMessage = _client.PostAsync(_client.BaseAddress + "EmpUpdate", content).Result;
+                if (httpResponseMessage.IsSuccessStatusCode)
+                {
+                    return new JsonResult(employee);
                 }
                 else
                 {
@@ -82,8 +118,8 @@ namespace MyProject.Controllers
 
             if (httpResponseMessage.IsSuccessStatusCode)
             {
-                string content= httpResponseMessage.Content.ReadAsStringAsync().Result;
-                employee =JsonSerializer.Deserialize<Employee>(content);
+                string content = httpResponseMessage.Content.ReadAsStringAsync().Result;
+                employee = JsonSerializer.Deserialize<Employee>(content);
                 return new JsonResult(employee);
             }
             else
