@@ -16,7 +16,10 @@ JQ(document).ready(function () {
         JQ('#salary').val('');
         JQ('#mdl').css("display", "block");
     });
-
+    JQ(document).on('click', function () {
+        JQ('.highlight-row').removeClass('highlight-row');
+        JQ('.highlight-row').css('transform', 'none'); // Reset the transformation
+    });
 })
 function closeModal() {
     JQ('#mdl').css("display", "none");
@@ -44,7 +47,7 @@ function BindEmpDetails() {
 
             var tbodyHTML = '<tbody>'
             JQ.each(data, function (index, employee) {
-                tbodyHTML += '<tr>';
+                tbodyHTML += '<tr row-id="' + employee.employeeId +'">';
                 tbodyHTML += '<td>' + employee.firstName + ' ' + employee.lastName + '</td>';
                 tbodyHTML += '<td>' + employee.email + '</td>';
                 tbodyHTML += '<td>' + employee.phoneNumber + '</td>';
@@ -65,22 +68,23 @@ function BindEmpDetails() {
             tbodyHTML = '';
             InnerHtml = '';
 
-            JQ('.edit-button').on('click', function () {
+            // Use event delegation for dynamically created or updated buttons
+            JQ('#tblDiv').on('click', '.edit-button', function () {
                 var employeeId = JQ(this).data('employee-id');
                 EditPopUp(employeeId);
             });
 
-            JQ('.delete-button').on('click', function () {
+            JQ('#tblDiv').on('click', '.delete-button', function () {
                 var employeeId = JQ(this).data('employee-id');
                 DeleteEmp(employeeId);
             });
-
         },
         error: function (error) {
 
         }
     })
 }
+
 
 function EditPopUp(id) {
 
@@ -214,20 +218,34 @@ function UpadteEmp() {
                 JQ('#empId, #fname, #lname, #email, #phoneNumber, #dob, #address, #department, #salary').val('');
 
                 // Update table values based on the response
-                var $row = JQ('#tblEmp tbody tr[data-employee-id="' + response.employeeId + '"]');
-                $row.find('td:eq(0)').text(response.firstName + ' ' + response.lastName);
-                $row.find('td:eq(1)').text(response.email);
-                $row.find('td:eq(2)').text(response.phoneNumber);
-                $row.find('td:eq(3)').text(response.dateOfBirth);
-                $row.find('td:eq(4)').text(response.address);
-                $row.find('td:eq(5)').text(response.department);
-                $row.find('td:eq(6)').text(response.salary);
+                var $row = JQ('#tblEmp tbody tr[row-id="' + response.employeeId + '"]');
+                if ($row.length > 0) {
+                    alert("Employee updated successfully.");
+                    $row.addClass('highlight-row');
+                    $row.css('transform', 'scale(1.01)');
+                    // Use setTimeout to remove the class and reset the transformation after 1 second
+                    setTimeout(function () {
+                        $row.removeClass('highlight-row');
+                        $row.css('transform', 'none'); // Reset the transformation
+                    }, 2000);
 
-                // Update buttons
-                $row.find('td:eq(7)').html('<button class="edit-button" data-employee-id="' + response.employeeId + '">Edit</button>');
-                $row.find('td:eq(8)').html('<button class="delete-button" data-employee-id="' + response.employeeId + '">Delete</button>');
+                    $row.find('td:eq(0)').text(response.firstName + ' ' + response.lastName);
+                    $row.find('td:eq(1)').text(response.email);
+                    $row.find('td:eq(2)').text(response.phoneNumber);
+                    var DOB = new data(response.dateOfBirth).toLocaleDateString("en-GB")
+                    $row.find('td:eq(3)').text(DOB);
+                    $row.find('td:eq(4)').text(response.address);
+                    $row.find('td:eq(5)').text(response.department);
+                    $row.find('td:eq(6)').text(response.salary);
 
-                console.log("UI Updated Successfully");
+                    // Update buttons
+                    $row.find('td:eq(7)').html('<button class="edit-button" data-employee-id="' + response.employeeId + '">Edit</button>');
+                    $row.find('td:eq(8)').html('<button class="delete-button" data-employee-id="' + response.employeeId + '">Delete</button>');
+
+                }
+                else {
+                    console.log("No matching row found.");
+                }
             } else {
                 alert("Something is wrong.");
             }

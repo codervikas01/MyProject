@@ -26,3 +26,8 @@
 .error{
     color:darkred;
 }
+
+.highlight-row {
+    background-color: #aaffaa; /* Change this to your desired highlight color */
+    transition: background-color 0.5s ease; /* Add a smooth transition effect */
+}
