@@ -14,7 +14,7 @@ JQ(document).ready(function () {
         JQ('#address').val('');
         JQ('#department').val('');
         JQ('#salary').val('');
-        JQ('#mdl').css("display", "block");
+        JQ('#mdlEditEmp').css("display", "block");
     });
     JQ(document).on('click', function () {
         JQ('.highlight-row').removeClass('highlight-row');
@@ -22,7 +22,8 @@ JQ(document).ready(function () {
     });
 })
 function closeModal() {
-    JQ('#mdl').css("display", "none");
+    JQ('#mdlEditEmp').css("display", "none");
+    JQ('#mdlDeleteEmp').css("display", "none");
 }
 
 
@@ -47,7 +48,7 @@ function BindEmpDetails() {
 
             var tbodyHTML = '<tbody>'
             JQ.each(data, function (index, employee) {
-                tbodyHTML += '<tr row-id="' + employee.employeeId +'">';
+                tbodyHTML += '<tr row-id="' + employee.employeeId + '">';
                 tbodyHTML += '<td>' + employee.firstName + ' ' + employee.lastName + '</td>';
                 tbodyHTML += '<td>' + employee.email + '</td>';
                 tbodyHTML += '<td>' + employee.phoneNumber + '</td>';
@@ -56,8 +57,8 @@ function BindEmpDetails() {
                 tbodyHTML += '<td>' + employee.address + '</td>';
                 tbodyHTML += '<td>' + employee.department + '</td>';
                 tbodyHTML += '<td>' + employee.salary + '</td>';
-                tbodyHTML += '<td><button class="edit-button" data-employee-id="' + employee.employeeId + '">Edit</button></td>';
-                tbodyHTML += '<td><button class="delete-button" data-employee-id="' + employee.employeeId + '">delete</td>';
+                tbodyHTML += '<td><button class="edit-button" data-employee-id="' + employee.employeeId + '"><i class="fas fa-edit" style="color:deepskyblue;"></i></button></td>';
+                tbodyHTML += '<td><button class="delete-button" data-employee-id="' + employee.employeeId + '"><i class="fas fa-trash-alt" style="color:crimson;"></i></button></td>';
                 tbodyHTML += '</tr>';
             });
             tbodyHTML += '</tbody></table>'
@@ -108,7 +109,7 @@ function EditPopUp(id) {
                 JQ('#address').val(response.address);
                 JQ('#department').val(response.department);
                 JQ('#salary').val(response.salary);
-                JQ('#mdl').css("display", "block");
+                JQ('#mdlEditEmp').css("display", "block");
             }
             else {
                 alert("Somthing is wrong.");
@@ -220,10 +221,10 @@ function UpadteEmp() {
                 // Update table values based on the response
                 var $row = JQ('#tblEmp tbody tr[row-id="' + response.employeeId + '"]');
                 if ($row.length > 0) {
-                    alert("Employee updated successfully.");
                     $row.addClass('highlight-row');
                     $row.css('transform', 'scale(1.01)');
                     // Use setTimeout to remove the class and reset the transformation after 1 second
+                    alert("Employee updated successfully.");
                     setTimeout(function () {
                         $row.removeClass('highlight-row');
                         $row.css('transform', 'none'); // Reset the transformation
@@ -232,15 +233,15 @@ function UpadteEmp() {
                     $row.find('td:eq(0)').text(response.firstName + ' ' + response.lastName);
                     $row.find('td:eq(1)').text(response.email);
                     $row.find('td:eq(2)').text(response.phoneNumber);
-                    var DOB = new data(response.dateOfBirth).toLocaleDateString("en-GB")
+                    var DOB = new Date(response.dateOfBirth).toLocaleDateString("en-GB")
                     $row.find('td:eq(3)').text(DOB);
                     $row.find('td:eq(4)').text(response.address);
                     $row.find('td:eq(5)').text(response.department);
                     $row.find('td:eq(6)').text(response.salary);
 
                     // Update buttons
-                    $row.find('td:eq(7)').html('<button class="edit-button" data-employee-id="' + response.employeeId + '">Edit</button>');
-                    $row.find('td:eq(8)').html('<button class="delete-button" data-employee-id="' + response.employeeId + '">Delete</button>');
+                    $row.find('td:eq(7)').html('<button class="edit-button" data-employee-id="' + response.employeeId + '"><i class="fas fa-edit" style="color:deepskyblue;style="color:deepskyblue;></i></button>');
+                    $row.find('td:eq(8)').html('<button class="delete-button" data-employee-id="' + response.employeeId + '"><i class="fas fa-trash-alt" style="color:crimson;"></i></button>');
 
                 }
                 else {
@@ -301,23 +302,51 @@ function SaveEmp() {
 
 }
 
-function DeleteEmp(id) {
+function DeleteEmp(EmpId) {
+
+    var empName = JQ('#tblEmp tbody tr[row-id="' + EmpId + '"]').find('td:eq(0)').text();
+    JQ('#EmpId').val(EmpId);
+    JQ('#empName').text(empName);
+    JQ('#mdlDeleteEmp').css('display', 'block')
+}
+JQ(document).on('click', '#confirmDeleteButton', function () {
+    var EmpId = JQ('#EmpId').val();
     JQ.ajax({
-        url: "Employee/DeleteEmployee?id=" + id,
+        url: "Employee/DeleteEmployee?id=" + EmpId,
         type: "Get",
         success: function (response) {
             if (response == 0) {
 
-                BindEmpDetails();
+                var $row = JQ('#tblEmp tbody tr[row-id="' + EmpId + '"]');
+
+                // Add class for highlighting
+                $row.addClass('highlight-Delrow');
+
+                // Use setTimeout to remove the class and apply delete animation after 2 seconds
+                setTimeout(function () {
+                    // Add class for delete animation
+                    $row.addClass('deleted');
+                    // Remove the row from the DOM after the animation duration
+                    setTimeout(function () {
+                        $row.remove();
+                    }, 500); // Adjust the time to match your animation duration
+                }, 500);
+
+
+                JQ('#mdlDeleteEmp').css('display', 'none')
+
             }
             else {
+                JQ('#mdlDeleteEmp').css('display', 'none')
+
                 alert("Somthing is wrong.");
             }
         },
         error: function (error) {
+            JQ('#mdlDeleteEmp').css('display', 'none')
             alert("Somthing is wrong.");
         }
 
     })
 
-}
+})
