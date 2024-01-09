@@ -12,7 +12,7 @@
 
 <div class="container" style="width:auto">
     <div>
-        <button id="btnAdd" style="margin-bottom:1%">Add</button>
+        <button id="btnAdd" style="margin-bottom:1%; background:lightblue">Add new Employee</button>
         <div id="tblDiv">
         </div>
     </div>
@@ -71,8 +71,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" onclick="closeModal();" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" onclick="AddEmp(1);" id="btnSave" class="btn btn-primary">Save</button>
-                            <button type="submit" onclick="AddEmp(2);" id="btnUpdate" class="btn btn-primary">Save changes</button>
+                            <button type="submit" onclick="AddEmp();" id="btnSave" class="btn btn-primary">Save</button>
                         </div>
                     </form>
                 </div>
@@ -90,7 +89,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input id="EmpId" hidden/>
+                    <input id="EmpId" hidden />
                     <p>Are you sure you want to delete this <b id="empName"></b>?</p>
                 </div>
                 <div class="modal-footer">
@@ -101,6 +100,15 @@
             </div>
         </div>
     </div>
+
+    @* Modal pop up successfull  *@
+    <div id="mdlsuccess" class="popup">
+        <p id="successMsg"></p>
+        <input id="empSuccessId" hidden />
+        <input id="editDeleteSuccess" hidden />
+        <button id="clsSuccessMsg" onclick="closesuccessModal()">Close</button>
+    </div>
+    <div id="overlay" class="overlay"></div>
 </div>
 
 

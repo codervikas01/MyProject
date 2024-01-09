@@ -3,9 +3,7 @@ JQ(document).ready(function () {
     BindEmpDetails();
     JQ('#btnAdd').click(function () {
         JQ('#addEmpTitle').css('display', 'block');
-        JQ('#btnUpdate').css('display', 'none');
         JQ('#updateEmpTitle').css('display', 'none');
-        JQ('#btnSave').css('display', 'block');
         JQ('#fname').val('');
         JQ('#lname').val('');
         JQ('#email').val('');
@@ -16,11 +14,11 @@ JQ(document).ready(function () {
         JQ('#salary').val('');
         JQ('#mdlEditEmp').css("display", "block");
     });
-    JQ(document).on('click', function () {
-        JQ('.highlight-row').removeClass('highlight-row');
-        JQ('.highlight-row').css('transform', 'none'); // Reset the transformation
-    });
-})
+
+    JQ('.highlight-row').removeClass('highlight-row');
+    JQ('.highlight-row').css('transform', 'none'); // Reset the transformation
+});
+
 function closeModal() {
     JQ('#mdlEditEmp').css("display", "none");
     JQ('#mdlDeleteEmp').css("display", "none");
@@ -90,9 +88,7 @@ function BindEmpDetails() {
 function EditPopUp(id) {
 
     JQ('#updateEmpTitle').css('display', 'block');
-    JQ('#btnUpdate').css('display', 'block');
     JQ('#addEmpTitle').css('display', 'none');
-    JQ('#btnSave').css('display', 'none');
 
     JQ.ajax({
         type: "Get",
@@ -122,7 +118,8 @@ function EditPopUp(id) {
 
     });
 }
-function AddEmp(id) {
+function AddEmp() {
+
     JQ("#Empform").validate({
         rules: {
             FirstName: {
@@ -184,7 +181,7 @@ function AddEmp(id) {
         },
         submitHandler: function (form) {
 
-            if (id == 1) {
+            if (JQ('#empId').val() == '') {
                 SaveEmp();
             }
             else {
@@ -193,6 +190,7 @@ function AddEmp(id) {
         }
     });
 }
+
 
 function UpadteEmp() {
     var employee = {
@@ -221,15 +219,14 @@ function UpadteEmp() {
                 // Update table values based on the response
                 var $row = JQ('#tblEmp tbody tr[row-id="' + response.employeeId + '"]');
                 if ($row.length > 0) {
-                    $row.addClass('highlight-row');
-                    $row.css('transform', 'scale(1.01)');
+                    //$row.addClass('highlight-row');
                     // Use setTimeout to remove the class and reset the transformation after 1 second
-                    alert("Employee updated successfully.");
-                    setTimeout(function () {
-                        $row.removeClass('highlight-row');
-                        $row.css('transform', 'none'); // Reset the transformation
-                    }, 2000);
-
+                    JQ('#successMsg').text('Employee updated successfully!').css('color', 'turquoise');
+                    JQ('#editDeleteSuccess').val("Edit")
+                    JQ('#mdlsuccess').css('display', 'block')
+                    JQ('#overlay').css('display', 'block')
+                    $row.addClass('highlight-row');
+                    JQ('#empSuccessId').val(response.employeeId);
                     $row.find('td:eq(0)').text(response.firstName + ' ' + response.lastName);
                     $row.find('td:eq(1)').text(response.email);
                     $row.find('td:eq(2)').text(response.phoneNumber);
@@ -318,19 +315,16 @@ JQ(document).on('click', '#confirmDeleteButton', function () {
             if (response == 0) {
 
                 var $row = JQ('#tblEmp tbody tr[row-id="' + EmpId + '"]');
+                JQ('#successMsg').text('Employee Deleted successfully!').css('color', 'crimson');
+                JQ('#editDeleteSuccess').val("Delete")
+                JQ('#mdlsuccess').css('display', 'block')
+                JQ('#overlay').css('display', 'block')
+                JQ('#empSuccessId').val(EmpId);
 
                 // Add class for highlighting
                 $row.addClass('highlight-Delrow');
 
                 // Use setTimeout to remove the class and apply delete animation after 2 seconds
-                setTimeout(function () {
-                    // Add class for delete animation
-                    $row.addClass('deleted');
-                    // Remove the row from the DOM after the animation duration
-                    setTimeout(function () {
-                        $row.remove();
-                    }, 500); // Adjust the time to match your animation duration
-                }, 500);
 
 
                 JQ('#mdlDeleteEmp').css('display', 'none')
@@ -350,3 +344,35 @@ JQ(document).on('click', '#confirmDeleteButton', function () {
     })
 
 })
+
+
+function closesuccessModal() {
+    JQ('#mdlsuccess').css('display', 'none');
+    JQ('#overlay').css('display', 'none')
+    var employeeId = JQ('#empSuccessId').val();
+    var $row = JQ('#tblEmp tbody tr[row-id="' + employeeId + '"]');
+    JQ('#successMsg').text('').css('color', 'none')
+
+    if (JQ('#editDeleteSuccess').val() == "Edit") {
+
+        $row.css('transform', 'scale(1.01)');
+        setTimeout(function () {
+            $row.css('transform', 'none'); // Reset the transformation
+            $row.removeClass('highlight-row');
+        }, 2000);
+        JQ('#editDeleteSuccess').val('')
+    }
+    else {
+        setTimeout(function () {
+            // Add class for delete animation
+            $row.addClass('deleted');
+            // Remove the row from the DOM after the animation duration
+            setTimeout(function () {
+                $row.remove();
+            }, 500); // Adjust the time to match your animation duration
+        }, 500);
+        JQ('#editDeleteSuccess').val('')
+
+    }
+
+}
