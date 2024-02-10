@@ -24,8 +24,7 @@ function closeModal() {
     JQ('#mdlDeleteEmp').css("display", "none");
 }
 
-
-function BindEmpDetails() {
+function BindEmpDetails()  {
     var InnerHtml = "<table id='tblEmp' class='table table-striped table-bordered table-hover'>";
     InnerHtml += "<thead class='thead-dark' style='background-color: #3498db; color: white;'>";
     InnerHtml += "<tr><th>Name</th>"
@@ -84,7 +83,6 @@ function BindEmpDetails() {
     })
 }
 
-
 function EditPopUp(id) {
 
     JQ('#updateEmpTitle').css('display', 'block');
@@ -118,6 +116,7 @@ function EditPopUp(id) {
 
     });
 }
+
 function AddEmp() {
 
     JQ("#Empform").validate({
@@ -191,6 +190,49 @@ function AddEmp() {
     });
 }
 
+function SaveEmp() {
+
+    var employee = {
+        firstName: JQ('#fname').val(),
+        lastName: JQ('#lname').val(),
+        email: JQ('#email').val(),
+        phoneNumber: JQ('#phoneNumber').val(),
+        dateOfBirth: JQ('#dob').val(),
+        address: JQ('#address').val(),
+        department: JQ('#department').val(),
+        salary: JQ('#salary').val(),
+        isActive: true
+    }
+
+    JQ.ajax({
+        url: "Employee/AddEmployee",
+        type: "POST",
+        data: employee,
+        success: function (response) {
+            if (response == 0) {
+                closeModal()
+                JQ('#fname').val('');
+                JQ('#lname').val('');
+                JQ('#email').val('');
+                JQ('#phoneNumber').val('');
+                JQ('#dob').val('');
+                JQ('#address').val('');
+                JQ('#department').val('');
+                JQ('#salary').val('');
+                JQ('#tblDiv').html('');
+                BindEmpDetails();
+            }
+            else {
+                alert("Somthing is wrong.");
+            }
+        },
+        error: function (error) {
+            alert("Somthing is wrong.");
+        }
+
+    })
+
+}
 
 function UpadteEmp() {
     var employee = {
@@ -255,50 +297,6 @@ function UpadteEmp() {
     });
 }
 
-function SaveEmp() {
-
-    var employee = {
-        firstName: JQ('#fname').val(),
-        lastName: JQ('#lname').val(),
-        email: JQ('#email').val(),
-        phoneNumber: JQ('#phoneNumber').val(),
-        dateOfBirth: JQ('#dob').val(),
-        address: JQ('#address').val(),
-        department: JQ('#department').val(),
-        salary: JQ('#salary').val(),
-        isActive: true
-    }
-
-    JQ.ajax({
-        url: "Employee/AddEmployee",
-        type: "POST",
-        data: employee,
-        success: function (response) {
-            if (response == 0) {
-                closeModal()
-                JQ('#fname').val('');
-                JQ('#lname').val('');
-                JQ('#email').val('');
-                JQ('#phoneNumber').val('');
-                JQ('#dob').val('');
-                JQ('#address').val('');
-                JQ('#department').val('');
-                JQ('#salary').val('');
-                JQ('#tblDiv').html('');
-                BindEmpDetails();
-            }
-            else {
-                alert("Somthing is wrong.");
-            }
-        },
-        error: function (error) {
-            alert("Somthing is wrong.");
-        }
-
-    })
-
-}
-
 function DeleteEmp(EmpId) {
 
     var empName = JQ('#tblEmp tbody tr[row-id="' + EmpId + '"]').find('td:eq(0)').text();
@@ -306,6 +304,7 @@ function DeleteEmp(EmpId) {
     JQ('#empName').text(empName);
     JQ('#mdlDeleteEmp').css('display', 'block')
 }
+
 JQ(document).on('click', '#confirmDeleteButton', function () {
     var EmpId = JQ('#EmpId').val();
     JQ.ajax({
@@ -344,7 +343,6 @@ JQ(document).on('click', '#confirmDeleteButton', function () {
     })
 
 })
-
 
 function closesuccessModal() {
     JQ('#mdlsuccess').css('display', 'none');
