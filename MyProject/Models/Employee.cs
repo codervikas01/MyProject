@@ -12,7 +12,7 @@
         public DateTime hireDate { get; set; } 
         public string? department { get; set; }
         public decimal salary { get; set; } 
-        public bool asActive { get; set; } 
+        public bool isActive { get; set; } 
 
     }
 }
