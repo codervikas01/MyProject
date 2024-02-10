@@ -90,3 +90,13 @@
     border: none;
     cursor: pointer;
 }
+
+#btnAdd {
+    margin-bottom: 1%;
+    border: outset;
+    height: 45px;
+    font-size: large;
+    border-radius: 25px;
+    background-color: mintcream;
+}
+}
